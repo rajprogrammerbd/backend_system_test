@@ -6,7 +6,7 @@
   "author": "Raj Dutta <rd2249619@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon",
+    "dev": "nodemon src/index.ts",
     "postinstall": "tsc",
     "start": "node build/index.js",
     "test": "jest --coverage",
