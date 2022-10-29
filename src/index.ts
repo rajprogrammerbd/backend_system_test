@@ -3,7 +3,7 @@ require('dotenv').config();
 import express from 'express';
 import bodyParser from 'body-parser';
 import Database from "./config/db.config"
-import homepageRoutes from './routes/homepage.route';
+import authRoutes from './routes/authRoutes.route';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
@@ -38,10 +38,11 @@ app.use(
   })
 );
 
-app.use('/api', homepageRoutes);
+app.use('/api', authRoutes);
 
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
     const statusCode = err.statusCode || 500;
+
     res.status(statusCode).json({'message': err.message});
     
     return;

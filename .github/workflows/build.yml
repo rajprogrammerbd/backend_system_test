@@ -9,6 +9,9 @@ on:
 jobs:
   Test:
     runs-on: ubuntu-latest
+    env:
+      MONGODB_ACCESS_URL: ${{ secrets.MONGODB_ACCESS_URL }}
+
     strategy:
       matrix:
         node-version: [16.x]
