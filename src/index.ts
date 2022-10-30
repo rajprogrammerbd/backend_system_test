@@ -14,6 +14,7 @@ process.on('uncaughtException', err => {
 
 process.on('unhandledRejection', error => {
   console.error('unhandledRejection', error);
+  process.exit(1);
 });
 
 // Check for database connection.
