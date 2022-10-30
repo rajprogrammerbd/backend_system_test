@@ -1,5 +1,5 @@
 import express from 'express';
-import { validateEmail } from '../config/functions';
+import { validateEmail, typeCheck } from '../config/functions';
 import authServices from '../services/auth.services';
 
 async function registerUsers(req: express.Request, res: express.Response) {
@@ -13,6 +13,13 @@ async function registerUsers(req: express.Request, res: express.Response) {
 
         if (!validateEmail(email)) {
             res.status(500).send({ message: 'Email is not validated' });
+            return;
+        }
+
+        // Check the types of user sends.
+        const check = typeCheck(req.body);
+        if (check) {
+            res.send({ message: check }).end();
             return;
         }
 
