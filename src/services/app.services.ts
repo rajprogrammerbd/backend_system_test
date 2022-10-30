@@ -1,15 +1,33 @@
-import { Deposit_amount } from './../config/interfaces';
+import { Deposit_amount, Withdraw_amount } from './../config/interfaces';
 import Database from "../config/db.config";
 import userSchma from "../config/schemas/user";
-import { Mongoose } from 'mongoose';
 
 export const User = Database.prepare(userSchma, 'user_accounts');
 
-function withdraw(email: string): Promise<any> {
+function withdraw(body: Withdraw_amount): Promise<any> {
   return new Promise(async (resolve, reject) => {
-    await User.find({ email }).then(async (user: any) => {
-        
-    });
+    const { userId, withdraw } = body;
+
+    await User.find({ id: userId }).then(async (users: any) => {
+        if (users.length === 0) {
+            reject({ message: "User not found" });
+        } else if (users.length > 1) {
+            reject({ message: 'Internal Error' });
+        } else {
+            const currentUser = users[0];
+
+            if ((currentUser.deposit - withdraw) < 0) {
+                reject({ message: "User doesn't have sufficient amount" });
+                return;
+            }
+
+            currentUser.deposit -= withdraw;
+
+            const res = await currentUser.save();
+
+            resolve(res.deposit);
+        }
+    }).catch((err: any) => reject(err));
   });
 }
 

@@ -18,6 +18,11 @@ export function typeCheck(body: any): string | boolean {
                 keys.push(key);
                 break;
             }
+        } else if (key === 'withdraw') {
+            if (typeof body[key] !== 'number') {
+                keys.push(key);
+                break;
+            }
         }
     }
 

@@ -100,3 +100,52 @@ test('Desposit api', async () => {
 
     await User.collection.deleteOne({ email: myEmail });
 }, 5000);
+
+// --------------------------------------------------------
+
+test('Desposit api', async () => {
+    const myEmail = 'demo@gmail.com';
+
+    await request(appPort).post('/api/register').send({ email: myEmail });
+
+    const withdraw_request_without_body = await request(appPort).post('/api/withdraw');
+
+    expect(withdraw_request_without_body.statusCode).toBe(404);
+    expect(withdraw_request_without_body.body).toEqual({
+        message: 'withdraw amount and user id is required'
+    });
+
+    const withdraw_request_only_amount = await request(appPort).post('/api/withdraw').send({ amount: 1 });
+
+    expect(withdraw_request_only_amount.statusCode).toBe(404);
+    expect(withdraw_request_only_amount.body).toEqual({
+        message: 'withdraw amount and user id is required'
+    });
+
+    const withdraw_request_only_userId = await request(appPort).post('/api/withdraw').send({ userId: 1 });
+
+    expect(withdraw_request_only_userId.statusCode).toBe(404);
+    expect(withdraw_request_only_userId.body).toEqual({
+        message: 'Withdraw amount is required'
+    });
+
+    const withdraw_request_body_invalid = await request(appPort).post('/api/withdraw').send({ userId: '1', amount: 'abc' });
+
+    expect(withdraw_request_body_invalid.statusCode).toBe(404);
+    expect(withdraw_request_body_invalid.body).toEqual({
+        message: 'Withdraw amount is required'
+    });
+
+    const withdraw_negative_value = await request(appPort).post('/api/withdraw').send({ userId: 1, amount: -1 });
+
+    expect(withdraw_negative_value.statusCode).toBe(404);
+
+    await request(appPort).post('/api/deposit').send({ userId: 1, amount: 1.5 });
+    
+    const withdraw_success = await request(appPort).post('/api/withdraw').send({ userId: 1, withdraw: 1 });
+
+    expect(withdraw_success.statusCode).toBe(200);
+    expect(withdraw_success.body).toBe(0.5);
+
+    await User.collection.deleteOne({ email: myEmail });
+}, 5000);
